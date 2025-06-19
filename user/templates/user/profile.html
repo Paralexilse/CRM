@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+{{super()}}
+<p><h1>Профиль</h1>
+<img style="max-width: 200px; max-height: 200px;" src="{{url_for('.user_avatar', id = user.id)}}">
+{% if user.deleted =='false' %}
+{% if current_user.get_id() == user.id or current_user.get_class() == 'admin' %}
+<form action="{{url_for('.upload_avatar')}}" method='POST' enctype='multipart/form-data'>
+    <input type='file' name='file'>
+    <input type="hidden" name="user_id" value="{{user.id}}">
+    <input type='submit' value='Загрузить'>
+</form>
+<a href="{{url_for('user.profile_settings', id = user.id)}}">Настройки профиля</a>
+{% endif %}
+{% if user.class == 'leader' %}
+<p><h2>Руководитель</h2>
+{% endif %}
+<p><h2>{{user.first_name}} {{user.last_name}}</h2>
+
+{% if current_user.get_id() != user.id %}
+<a href="{{url_for('messenger.chat', id = user.id)}}">Написать</a> 
+<a href="{{url_for('messenger.add_chat', id = user.id)}}">Добавить в мои чаты</a>
+</label>{% if current_user.get_class() == 'leader'%} <a href="#add-user-dialog-{{user.id}}" class="open-dialog">Добавить в отдел</a> 
+{% endif %}
+
+
+<dialog id="add-user-dialog-{{user.id}}">
+  <form method="POST" action="{{url_for('department.add_user_to_department' )}}">
+    <h3>Добавить пользователя в отдел</h3>
+    <label>Добавить {{user.first_name}} {{user.last_name}}</label>
+    <input type="hidden" name="user_id" value="{{ user.id }}">
+    <select name="department_id">
+      {% for department in departments %}
+        <option value="{{ department.id }}">{{ department.title }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit">Добавить</button>
+    <a href="#" class="close-dialog">Закрыть</a>
+  </form>
+</dialog>
+{% endif %}
+
+
+{% if user.position %}<p><label>Должность: {{user.position}}</label>{% endif%}
+<p><label>Почта: {{user.email}}</label>
+{% if user.date_of_birth %}<p><label>Дата рождения: {{user.date_of_birth}}</label>{% endif%}
+<p><label>Пол: {{user.gender}}</label>
+{% else %}
+<h1>Удаленный пользователь</h1>
+{% endif %}
+{% endblock content %}

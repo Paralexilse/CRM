@@ -1,0 +1,22 @@
+dialog {
+    display: none; /* По умолчанию скрыто */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid #ccc;
+    padding: 20px;
+    z-index: 1000;
+    background: white;
+  }
+  
+  /* Показываем окно при переходе по якорю */
+  dialog:target {
+    display: block;
+  }
+  
+  .close-dialog {
+    display: block;
+    margin-top: 10px;
+    text-align: center;
+}

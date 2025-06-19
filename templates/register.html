@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+{{super()}}
+<p><h1>Регистрация</h1>
+{% for msg in get_flashed_messages() %}
+<span>{{msg}}</span>
+{% endfor %}
+<form action="/register" method="post">
+    {{form.hidden_tag()}}
+    {% for field in form if field.name not in ['submit', 'csrf_token'] %}
+    <p>{{field.label()}}
+    {% if field.errors %}
+    {{field(class = 'invalid')}}
+    <span class="error-feedback">
+    {% for e in field.errors %}
+    {{e}}
+    {% endfor %}
+    {% else %}
+    {{field()}}
+    </span>
+    {% endif %}
+    {% endfor%}
+    <p>{{form.submit()}}
+</form>
+<a href="{{url_for('index')}}">На главную</a>
+{% endblock content %}

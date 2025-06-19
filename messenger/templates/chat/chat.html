@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+{{super()}}
+<p><h1>Чат с {{companion.first_name}}</h1>
+{% for msg in messages %}
+<p>{{msg.datetime}} - {{msg.first_name}} {{msg.last_name}} - {{msg.message}} 
+{% endfor %}
+{% if companion.deleted =='false' %}
+<form action="{{url_for('messenger.chat', id = companion.id)}}" method = 'post'>
+    <input type="text" name="message">
+    <input type="submit">
+</form>
+{% endif %}
+{% endblock content %}

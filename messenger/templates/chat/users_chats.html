@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+{{super()}}
+<p><h1>Чаты отделов</h1>
+{% for department in departments %}
+<p><img style="max-width: 200px; max-height: 200px;" src="{{url_for('department.department_logo', id = department.id)}}"><a href="{{url_for('department.department_profile', id = department.id )}}"> {{department.title}} </a> <a href="{{url_for('department.department_chat', id = department.id)}}"> Чат отдела </a>
+{% endfor %}
+
+
+<p><h1>Чаты с пользователями</h1>
+{% for user in users %}
+<p><label><img style="max-width: 200px; max-height: 200px;" src="{{url_for('user.user_avatar', id = user.id)}}"> {{user.first_name}} {{user.last_name}} <a href="{{url_for('user.profile', id = user.id)}}">Профиль</a> <a href="{{url_for('messenger.chat', id = user.id)}}">Написать</a> <a href="{{url_for('messenger.delete_chat', id = user.id)}}">Удалить чат</a></label>
+{% endfor %}
+{% endblock content %}

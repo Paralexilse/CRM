@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+{{super()}}
+<p><h1>Список пользователей</h1>
+<form action="{{url_for('.user_list')}}" method="get">
+<p><label>Поиск: </label><input type = 'text' name="search_string" value=""><input type="submit" value="Найти">
+</form>
+{% for user in users %}
+<p><label><img style="max-width: 200px; max-height: 200px;" src="{{url_for('.user_avatar', id = user.id)}}"> {{user.first_name}} {{user.last_name}} 
+<a href="{{url_for('user.profile', id = user.id)}}">Профиль</a> 
+{% if user.id != current_user.get_id() %}
+<a href="{{url_for('messenger.chat', id = user.id)}}">Написать</a> 
+<a href="{{url_for('messenger.add_chat', id = user.id)}}">Добавить в мои чаты</a>
+</label>{% if current_user.get_class() == 'leader' or current_user.get_class() == 'admin'%} <a href="#add-user-dialog-{{user.id}}" class="open-dialog">Добавить в отдел</a> 
+
+<dialog id="add-user-dialog-{{user.id}}">
+  <form method="POST" action="{{url_for('department.add_user_to_department' )}}">
+    <h3>Добавить пользователя в отдел</h3>
+    <label>Добавить {{user.first_name}} {{user.last_name}}</label>
+    <input type="hidden" name="user_id" value="{{ user.id }}">
+    <select name="department_id">
+      {% for department in departments %}
+        <option value="{{ department.id }}">{{ department.title }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit">Добавить</button>
+    <a href="#" class="close-dialog">Закрыть</a>
+  </form>
+</dialog>
+{% endif %}
+{% endif %}
+
+
+{% endfor %}
+{% endblock content %}

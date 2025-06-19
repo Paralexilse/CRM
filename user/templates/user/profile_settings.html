@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+{{super()}}
+<p><h1>Настройки аккаунта {{user.first_name}} {{user.last_name}}</h1>
+<form action="{{url_for('user.profile_settings', id = user.id)}}" method="post">
+    {{form.hidden_tag()}}
+    {% for field in form if field.name not in ['submit', 'csrf_token', 'user_class', 'email'] %}
+    <p>{{field.label()}}
+    {% if field.errors %}
+    {{field(class = 'invalid')}}
+    <span class="error-feedback">
+    {% for e in field.errors %}
+    {{e}}
+    {% endfor %}
+    {% else %}
+    {{field()}}
+    </span>
+    {% endif %}
+    {% endfor%}
+    {% if current_user.get_class() == 'admin' %}
+    <p>{{form.user_class.label()}} {{form.user_class()}}
+    <p><p>{{form.email.label()}} {{form.email()}}
+    {% endif %}
+    <p>{{form.submit()}}
+</form>
+{% endblock content %}

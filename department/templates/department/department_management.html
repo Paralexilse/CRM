@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+{{super()}}
+<p><h1>Настройки отдела</h1>
+<form action="{{url_for('.department_management', id = department.id)}}" method="post" enctype="multipart/form-data">
+    {{form.hidden_tag()}}
+    {% for field in form if field.name not in ['submit', 'csrf_token'] %}
+    <p>{{field.label()}}
+    {% if field.errors %}
+    {{field(class = 'invalid')}}
+    <span class="error-feedback">
+    {% for e in field.errors %}
+    {{e}}
+    {% endfor %}
+    {% else %}
+    {{field()}}
+    </span>
+    {% endif %}
+    {% endfor%}
+    <p>{{form.submit()}}
+</form>
+
+{% if owners %}
+<h2>Руководители :</h2>
+{% for owner in owners %}
+<p><a href="{{url_for('user.profile', id = owner.id )}}"><img src="{{url_for('user.user_avatar', id = owner.id )}}"> 
+<p>{{owner.first_name}} {{owner.last_name}}</a> <a href="{{url_for('.delete_user_from_department', id_user = owner.id, id_department = department.id)}}">Удалить сотрудника из отдела</a> <a href="{{url_for('.lose_owner', id_user = owner.id, id_department = department.id)}}">Забрать права руководителя</a>
+{% endfor %}
+{% endif %}
+{% if members %}
+<h2>Сотрудники :</h2>
+{% for member in members %}
+{% if member not in owners %}
+<p><a href="{{url_for('user.profile', id = member.id )}}"><img src="{{url_for('user.user_avatar', id = member.id )}}"> 
+<p>{{member.first_name}} {{member.last_name}}</a> <a href="{{url_for('.delete_user_from_department', id_user = member.id, id_department = department.id)}}">Удалить сотрудника из отдела</a> <a href="{{url_for('.make_owner', id_user = member.id, id_department = department.id)}}">Дать права руководителя руководителя</a>
+{% endif %}
+{% endfor %}
+{% endif %}
+
+
+<p><a href="#delete_department_dialog" class="open-dialog">Удалить отдел</a> 
+<dialog id="delete_department_dialog">
+  <form method="POST" action="{{url_for('.delete_department')}}">
+    <h3>Удалить отдел {{department.title}}?</h3>
+    <input type="hidden" name="id_department" value="{{department.id}}">
+    <button type="submit">Удалить</button>
+    <a href="#" class="close-dialog">Отмена</a>
+  </form>
+</dialog>
+
+
+{% endblock content %}

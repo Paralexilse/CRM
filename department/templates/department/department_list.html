@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+{{super()}}
+
+{% if current_user.get_class() == 'leader' %}
+<p><a href="{{url_for('.create_department')}}">Создать отдел</a>
+{% endif %}
+
+{% if users_departments[0] %}
+<p><h1>Мои отделы</h1>
+{% for department in users_departments %}
+<p><img style="max-width: 200px; max-height: 200px;"  src="{{url_for('.department_logo', id = department.id)}}"><a href="{{url_for('.department_profile', id = department.id )}}"> {{department.title}} </a> <a href="{{url_for('.department_chat', id = department.id)}}"> Чат отдела </a>
+{% endfor %}
+{% endif %}
+
+<form action="{{url_for('.department_list')}}" method="get">
+<p><label>Поиск: </label><input type = 'text' name="search_string" value=""><input type="submit" value="Найти">
+</form>
+<p><h1>Список отделов</h1>
+{% for department in other_departments %}
+<p><img style="max-width: 200px; max-height: 200px;" src="{{url_for('.department_logo', id = department.id)}}"><a href="{{url_for('.department_profile', id = department.id )}}">{{department.title}}</a>
+{% endfor %}
+{% endblock content %}

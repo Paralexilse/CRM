@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block content %}
+{{super()}}
+<p><h1>ParaCRM</h1>
+<p><a href="{{url_for('login')}}">Войти</a>
+<p><a href="{{url_for('register')}}">Регистрация</a>
+{% endblock content %}
