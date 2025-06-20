@@ -2,7 +2,7 @@
 {% block content %}
 {{super()}}
 <p><h1>Профиль отдела</h1>
-<img src="{{url_for('.department_logo', id = department.id)}}">
+<img style="max-width: 400px; max-height: 400px;"  src="{{url_for('.department_logo', id = department.id)}}">
 <h1>{{department.title}}</h1>
 {%  if current_user.get_id() in department.owners or current_user.get_class() == 'admin' %}
 <a href="{{url_for('.department_management', id = department.id)}}">Управление отделом</a>
@@ -15,7 +15,7 @@
 {% if owners %}
 <h2>Руководители :</h2>
 {% for owner in owners %}
-<p><a href="{{url_for('user.profile', id = owner.id )}}"><img src="{{url_for('user.user_avatar', id = owner.id )}}"> 
+<p><a href="{{url_for('user.profile', id = owner.id )}}"><img style="max-width: 200px; max-height: 200px;"  src="{{url_for('user.user_avatar', id = owner.id )}}"> 
 <p>{{owner.first_name}} {{owner.last_name}}</a>
 {% endfor %}
 {% endif %}
@@ -23,7 +23,7 @@
 <h2>Сотрудники :</h2>
 {% for member in members %}
 {% if member not in owners %}
-<p><a href="{{url_for('user.profile', id = member.id )}}"><img src="{{url_for('user.user_avatar', id = member.id )}}"> 
+<p><a href="{{url_for('user.profile', id = member.id )}}"><img style="max-width: 200px; max-height: 200px;"  src="{{url_for('user.user_avatar', id = member.id )}}"> 
 <p>{{member.first_name}} {{member.last_name}}</a>
 {% endif %}
 {% endfor %}
