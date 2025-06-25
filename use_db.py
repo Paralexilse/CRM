@@ -18,7 +18,7 @@ def connect_db():
             dbname='messenger',
             user='postgres',
             password='565441', 
-            host='localhost'
+            host='dbps'
             )
     return g.db
 
