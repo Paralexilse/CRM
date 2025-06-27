@@ -3,9 +3,9 @@ services:
     image: postgres:17-alpine
     container_name: db
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=565441
-      - POSTGRES_DB=messenger
+      - POSTGRES_USER=${DATABASE_USERNAME}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_NAME}
     volumes:
       - db-data:/var/lib/postgresql/data
     networks:
@@ -22,12 +22,17 @@ services:
     depends_on:
       - db
   crm:
-    image: paralexilse/crm:latest
+    build: ./crm
+    image: crm
     container_name: flask-crm
+    restart: always
+    command: "python app.py runserver 0.0.0.0:8000"
+    env_file:
+      - .env
     networks:
       - crmnet
     ports:
-      - "0.0.0.0:8000:8000"
+      - "8000:8000"
     links:
       - "db:dbps"
     depends_on:
