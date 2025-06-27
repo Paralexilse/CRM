@@ -1,0 +1,43 @@
+services: 
+  db:
+    image: postgres:17-alpine
+    container_name: db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=565441
+      - POSTGRES_DB=messenger
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - crmnet
+  adminer:
+    image: adminer
+    container_name: adminer
+    ports:
+      - "0.0.0.0:8080:8080"
+    links:
+      - "db:db"
+    networks:
+      - crmnet
+    depends_on:
+      - db
+  crm:
+    image: paralexilse/crm:latest
+    container_name: flask-crm
+    networks:
+      - crmnet
+    ports:
+      - "0.0.0.0:8000:8000"
+    links:
+      - "db:dbps"
+    depends_on:
+      - db
+
+
+networks:
+  crmnet:
+    driver: bridge
+volumes:
+  db-data:
+
+    # docker run -d --name db --network crmnet -e POSTGRES_DB=mydata -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=565441 -v db-data:/var/lib/postgresql/data postgres:17-alpine
