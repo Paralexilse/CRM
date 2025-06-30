@@ -1,4 +1,21 @@
 services: 
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: always
+    networks:
+      - crmnet
+    expose:
+      - 8088
+    ports:
+      - "0.0.0.0:8088:80"
+      - "0.0.0.0:443:443"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - static-data:/app/www/crm/static
+    depends_on:
+      - crm
+
   db:
     image: postgres:17-alpine
     container_name: db
@@ -8,8 +25,10 @@ services:
       - POSTGRES_DB=${DATABASE_NAME}
     volumes:
       - db-data:/var/lib/postgresql/data
+      
     networks:
       - crmnet
+
   adminer:
     image: adminer
     container_name: adminer
@@ -21,28 +40,28 @@ services:
       - crmnet
     depends_on:
       - db
+
   crm:
     build: ./crm
     image: crm
     container_name: flask-crm
     restart: always
-    command: "python app.py runserver 0.0.0.0:8000"
     env_file:
       - .env
     networks:
       - crmnet
-    ports:
-      - "8000:8000"
     links:
       - "db:dbps"
+    volumes:
+      - static-data:/app/www/crm/static
     depends_on:
       - db
-
 
 networks:
   crmnet:
     driver: bridge
 volumes:
   db-data:
+  static-data:
 
     # docker run -d --name db --network crmnet -e POSTGRES_DB=mydata -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=565441 -v db-data:/var/lib/postgresql/data postgres:17-alpine
