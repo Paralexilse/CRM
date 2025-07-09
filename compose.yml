@@ -42,8 +42,7 @@ services:
       - db
 
   crm:
-    build: ./crm
-    image: crm
+    image: paralexilse/crm
     container_name: flask-crm
     restart: always
     env_file:
