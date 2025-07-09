@@ -16,4 +16,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
-      run: docker build ./crm -t crm
+      run: docker build ./crm -t paralexilse/crm
+    - name: Push the docker image
+      run: docker push paralexilse/crm
