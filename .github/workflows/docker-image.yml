@@ -36,5 +36,5 @@ jobs:
     - name: Pull the Docker image
       run: sudo docker pull paralexilse/crm:latest
     - name: Docker compose up
-      run: sudo docker compose up
+      run: sudo docker compose up -d
     
