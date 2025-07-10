@@ -24,3 +24,11 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
     - name: Push the docker image
       run: docker push paralexilse/crm
+
+  deploy:
+    runs-on: self-hosted
+    needs: build
+    steps:
+    - name: Pull the Docker image
+      run: docker pull paralexilse/crm:latest
+    
