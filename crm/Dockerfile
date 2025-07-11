@@ -6,9 +6,5 @@ ENV PYTHONDONTWRITEBYTECODE=1
 WORKDIR /app/www/crm
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-ARG DB_NAME
-ARG DB_HOST
-ENV DB_NAME=${DB_NAME}
-ENV DB_HOST=${DB_HOST}
 COPY . . 
 CMD ["python", "app.py"]

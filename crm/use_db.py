@@ -4,7 +4,6 @@ from psycopg2 import sql, extras, Binary
 from psycopg2.extras import DictCursor
 import time
 from flask import flash
-import os
 
 
 def datetime():
@@ -16,10 +15,10 @@ def datetime():
 def connect_db():
     if 'db' not in g:
         g.db = psycopg2.connect(
-            dbname=os.getenv('DB_NAME', 'messenger'),
-            user=os.getenv('DB_USER', 'postgres'),
-            password=os.getenv('DB_PASSWORD', '565441'), 
-            host=os.getenv('DB_HOST', 'localhost') 
+            dbname='crm',
+            user='postgres',
+            password='565441', 
+            host='dbps'
             )
     return g.db
 
