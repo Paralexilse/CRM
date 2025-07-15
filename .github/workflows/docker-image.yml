@@ -30,11 +30,11 @@ jobs:
     needs: build
     steps:
     - name: Docker compose down
-      run: sudo docker compose down
+      run: docker compose down
     - name: Remove Docker image
-      run: sudo docker rmi paralexilse/crm:latest
+      run: docker rmi paralexilse/crm:latest
     - name: Pull the Docker image
-      run: sudo docker pull paralexilse/crm:latest
+      run: docker pull paralexilse/crm:latest
     - name: Docker compose up
-      run: sudo docker compose up -d
+      run: docker compose up -d
     
