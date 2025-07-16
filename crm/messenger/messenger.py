@@ -24,11 +24,11 @@ def before_request():
 @login_required
 def chat(id):
     companion = dbase.get_user_by_id(id)
-    messages = dbase.get_chat_messages(current_user.get_id(), id)
+    
     try:
         if request.method == 'POST':
             dbase.send_message_to_user(current_user.get_id(), id, request.form['message'])
-            
+        messages = dbase.get_chat_messages(current_user.get_id(), id)        
     except Exception as e:
         print('Ошибка при отправке сообщения ', str(e))
 

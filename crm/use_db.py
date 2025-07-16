@@ -15,10 +15,10 @@ def datetime():
 def connect_db():
     if 'db' not in g:
         g.db = psycopg2.connect(
-            dbname='crm',
+            dbname='messenger',
             user='postgres',
             password='565441', 
-            host='dbps'
+            host='localhost'
             )
     return g.db
 
