@@ -140,7 +140,7 @@ class UseDB:
     def get_chat_messages(self, id_user1, id_user2):
         try:
             with self.conn.cursor(cursor_factory=extras.DictCursor) as cur:
-                cur.execute(f"""SELECT first_name, last_name, datetime, message FROM (SELECT id_sender, datetime, message FROM messages
+                cur.execute(f"""SELECT id_sender, first_name, last_name, datetime, message FROM (SELECT id_sender, datetime, message FROM messages
 WHERE id_sender::integer = {id_user1}::integer and id_recipient::integer = {id_user2}::integer or id_sender::integer = {id_user2}::integer and id_recipient::integer = {id_user1}::integer)
 JOIN users ON id_sender::integer = users.id::integer; """)
                 print('Сообщения пользователей получены из БД')
@@ -248,7 +248,7 @@ JOIN users ON id_sender::integer = users.id::integer; """)
     def get_department_messages(self, id_department):
         try:
             with self.conn.cursor(cursor_factory=extras.DictCursor) as cur:
-                cur.execute(f"""SELECT first_name, last_name, datetime, message FROM department_messages 
+                cur.execute(f"""SELECT id_sender, first_name, last_name, datetime, message FROM department_messages 
                                 JOIN users ON id_sender::integer = users.id::integer
                                 WHERE id_department = {id_department};""")
                 print('Сообщения отдела получены из БД')

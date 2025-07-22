@@ -9,7 +9,8 @@ from user_login import UserLogin
 from user.user import user
 from messenger.messenger import messenger
 from department.department import department
-
+from flask_socketio import SocketIO,  emit, join_room
+from use_db import datetime
 
 
 
@@ -19,6 +20,7 @@ SECRET_KEY = 'dasidj8dj1892839hdf8732g4f683g87fg7836gf786g3478fg3476'
 
 app = Flask(__name__)
 app.config.from_object(__name__)
+socketio = SocketIO(app)
 
 app.register_blueprint(user, url_prefix='/user')
 app.register_blueprint(messenger, url_prefix='/messenger')
@@ -27,6 +29,59 @@ app.register_blueprint(department, url_prefix='/department')
 
 login_manager = LoginManager(app)
 
+@socketio.on('join')
+def handle_join(data):
+    user_id = data['user_id']
+    join_room(f'user_{user_id}')
+
+
+
+@socketio.on('send_message')
+def handle_message(data):
+    try:
+        global dbase
+        db = connect_db()
+        dbase = UseDB(db)
+
+        sender_id = str(data['sender_id'])
+        receiver_id = str(data['receiver_id'])
+        message = str(data['message'])
+        dbase.send_message_to_user(sender_id, receiver_id, message)
+
+        # sender = {'id': current_user.get_id(), 'first_name': current_user.get_self()['first_name'], 'last_name': current_user.get_self()['last_name']}
+
+
+        emit('receive_message', {'sender_id': current_user.get_id(), 'first_name': current_user.get_self()['first_name'], 'last_name': current_user.get_self()['last_name'], 'message': message, 'datetime': datetime()}, room=f'user_{receiver_id}')
+        emit('receive_message', {'sender_id': current_user.get_id(), 'first_name': current_user.get_self()['first_name'], 'last_name': current_user.get_self()['last_name'], 'message': message, 'datetime': datetime()}, room=f'user_{sender_id}')
+
+    except Exception as e:
+        print(f'Ошибка отправки сообщение '+ str(e))
+
+
+@socketio.on('join_department')
+def handle_join(data):
+    department_id = data['department_id']
+    join_room(f'department_{department_id}')
+
+@socketio.on('send_message_department')
+def handle_message(data):
+    try:
+        global dbase
+        db = connect_db()
+        dbase = UseDB(db)
+
+        sender_id = str(data['sender_id'])
+        department_id = str(data['department_id'])
+        message = str(data['message'])
+        dbase.send_message_to_department_chat(sender_id, department_id, message)
+
+        sender = dbase.get_user_by_id(sender_id)
+
+        emit('receive_message_department', {'sender_id': sender['id'], 'first_name': sender['first_name'], 'last_name': sender['last_name'], 'message': message, 'datetime': datetime()}, room=f'department_{department_id}')
+
+
+    except Exception as e:
+        print('Ошибка отправления сообщения в отдел' + str(e))
 
 
 
@@ -95,4 +150,6 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8000)
+    socketio.run(app, debug=True, host='0.0.0.0', port=8000)
+
+   

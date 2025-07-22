@@ -147,13 +147,13 @@ def department_chat(id):
     department = dbase.get_department(id)
     messages = dbase.get_department_messages(id)
 
-    try:
-        if request.method == 'POST':
-            message = request.form['message']
-            dbase.send_message_to_department_chat(current_user.get_id(), id, message)
-            print('Сообщение отправлено в чат отдела')
-    except Exception as e:
-        print('Ошибка отправки сообщения в чат отдела')
+    # try:
+    #     if request.method == 'POST':
+    #         message = request.form['message']
+    #         dbase.send_message_to_department_chat(current_user.get_id(), id, message)
+    #         print('Сообщение отправлено в чат отдела')
+    # except Exception as e:
+    #     print('Ошибка отправки сообщения в чат отдела')
 
     if current_user.get_id() in department['owners'] or current_user.get_id() in department['members'] or current_user.get_class() == 'admin'  :
         return render_template('department/department_chat.html', menu = menu, department = department, messages=messages)
