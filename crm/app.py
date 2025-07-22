@@ -17,7 +17,6 @@ from use_db import datetime
 DEBUG = True
 SECRET_KEY = 'dasidj8dj1892839hdf8732g4f683g87fg7836gf786g3478fg3476'
 
-
 app = Flask(__name__)
 app.config.from_object(__name__)
 socketio = SocketIO(app)
@@ -26,15 +25,14 @@ app.register_blueprint(user, url_prefix='/user')
 app.register_blueprint(messenger, url_prefix='/messenger')
 app.register_blueprint(department, url_prefix='/department')
 
-
 login_manager = LoginManager(app)
+
+#WEB SOCKETS CHAT
 
 @socketio.on('join')
 def handle_join(data):
     user_id = data['user_id']
     join_room(f'user_{user_id}')
-
-
 
 @socketio.on('send_message')
 def handle_message(data):
@@ -48,15 +46,14 @@ def handle_message(data):
         message = str(data['message'])
         dbase.send_message_to_user(sender_id, receiver_id, message)
 
-        # sender = {'id': current_user.get_id(), 'first_name': current_user.get_self()['first_name'], 'last_name': current_user.get_self()['last_name']}
-
-
         emit('receive_message', {'sender_id': current_user.get_id(), 'first_name': current_user.get_self()['first_name'], 'last_name': current_user.get_self()['last_name'], 'message': message, 'datetime': datetime()}, room=f'user_{receiver_id}')
         emit('receive_message', {'sender_id': current_user.get_id(), 'first_name': current_user.get_self()['first_name'], 'last_name': current_user.get_self()['last_name'], 'message': message, 'datetime': datetime()}, room=f'user_{sender_id}')
 
     except Exception as e:
         print(f'Ошибка отправки сообщение '+ str(e))
 
+
+#WEB SOCKETS DEPARTMENT
 
 @socketio.on('join_department')
 def handle_join(data):
@@ -78,7 +75,6 @@ def handle_message(data):
         sender = dbase.get_user_by_id(sender_id)
 
         emit('receive_message_department', {'sender_id': sender['id'], 'first_name': sender['first_name'], 'last_name': sender['last_name'], 'message': message, 'datetime': datetime()}, room=f'department_{department_id}')
-
 
     except Exception as e:
         print('Ошибка отправления сообщения в отдел' + str(e))
