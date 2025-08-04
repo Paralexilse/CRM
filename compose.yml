@@ -42,6 +42,7 @@ services:
       - db
 
   crm:
+    build: ./crm
     image: paralexilse/crm
     container_name: flask-crm
     restart: always
@@ -51,16 +52,64 @@ services:
       - crmnet
     links:
       - "db:dbps"
+    ports:
+      - "8000:8000"
+      - "5000:5000"
     volumes:
       - static-data:/app/www/crm/static
     depends_on:
       - db
 
+  prometheus:
+    image: prom/prometheus
+    ports: 
+      - "9090:9090"
+    volumes: 
+      - prometheus-data:/etc/prometheus
+    networks:
+      - crmnet
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    restart: always
+    
+  
+  grafana:
+    image: grafana/grafana
+    ports: 
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - crmnet
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+    restart: always
+  
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter
+    ports:
+      - "9187:9187"
+    networks:
+      - crmnet
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@db:5432/postgres?sslmode=disable"   
+  
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter
+    ports:
+      - "9113:9113"
+    networks:
+      - crmnet
+    command:  
+      - '-nginx.scrape-uri=http://nginx:8089/stub_status'
+    
 networks:
   crmnet:
     driver: bridge
 volumes:
   db-data:
   static-data:
+  prometheus-data:
+  grafana-data:
 
     # docker run -d --name db --network crmnet -e POSTGRES_DB=mydata -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=565441 -v db-data:/var/lib/postgresql/data postgres:17-alpine

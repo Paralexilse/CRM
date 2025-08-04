@@ -11,6 +11,10 @@ from messenger.messenger import messenger
 from department.department import department
 from flask_socketio import SocketIO,  emit, join_room
 from use_db import datetime
+from prometheus_flask_exporter import PrometheusMetrics
+from prometheus_client import start_http_server, make_wsgi_app
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
+from threading import Thread
 
 
 
@@ -18,16 +22,25 @@ DEBUG = True
 SECRET_KEY = 'dasidj8dj1892839hdf8732g4f683g87fg7836gf786g3478fg3476'
 
 app = Flask(__name__)
+metrics = PrometheusMetrics(app, path='/metrics')
 app.config.from_object(__name__)
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins=["http://localhost:8088", "http://localhost:8000"])
 
 app.register_blueprint(user, url_prefix='/user')
 app.register_blueprint(messenger, url_prefix='/messenger')
 app.register_blueprint(department, url_prefix='/department')
 
+
+
 login_manager = LoginManager(app)
 
-#WEB SOCKETS CHAT
+
+
+app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
+    '/metrics': make_wsgi_app()
+})
+
+
 
 @socketio.on('join')
 def handle_join(data):
@@ -145,7 +158,10 @@ def logout():
 
 
 
+
 if __name__ == '__main__':
-    socketio.run(app, debug=True, host='0.0.0.0', port=8000)
+
+
+    socketio.run(app, debug=True, host='0.0.0.0', port=8000, allow_unsafe_werkzeug=True)
 
    
