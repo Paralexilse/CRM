@@ -63,7 +63,7 @@ services:
   prometheus:
     image: prom/prometheus
     ports: 
-      - "9090:9090"
+      - "9099:9090"
     volumes: 
       - prometheus-data:/etc/prometheus
     networks:
@@ -76,7 +76,7 @@ services:
   grafana:
     image: grafana/grafana
     ports: 
-      - "3000:3000"
+      - "3003:3000"
     volumes:
       - grafana-data:/var/lib/grafana
     networks:

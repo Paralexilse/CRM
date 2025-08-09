@@ -24,7 +24,9 @@ SECRET_KEY = 'dasidj8dj1892839hdf8732g4f683g87fg7836gf786g3478fg3476'
 app = Flask(__name__)
 metrics = PrometheusMetrics(app, path='/metrics')
 app.config.from_object(__name__)
-socketio = SocketIO(app, cors_allowed_origins=["http://localhost:8088", "http://localhost:8000"])
+socketio = SocketIO(app, cors_allowed_origins=["http://localhost:8088", "http://localhost:8000"], async_mode='threading')
+
+app.config['WTF_CSRF_ENABLED'] = True 
 
 app.register_blueprint(user, url_prefix='/user')
 app.register_blueprint(messenger, url_prefix='/messenger')
@@ -141,9 +143,11 @@ def register():
             if dbase.create_user(form.first_name.data, form.last_name.data, form.position.data, form.email.data, form.date_of_birth.data, form.gender.data, generate_password_hash(form.password.data)):
                 print('Успешная регистрация ')
                 flash('Успешная регистрация')
+         
             else:
                 print('Ошибка регистрации возможно email уже используется или поля указаны неверно')
                 flash('Ошибка регистрации возможно email уже используется или поля указаны неверно')
+           
 
     except Exception as e:
         print('Ошибка регистрации ' + str(e))
